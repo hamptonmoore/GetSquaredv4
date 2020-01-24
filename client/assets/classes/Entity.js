@@ -13,21 +13,7 @@ export class Entity{
             (Math.random() * 100000000 | 0).toString(16);
 
         // The component data will live in this object
-        this.components = {};
-        if (components) {
-            for (let component of components) {
-                this.addComponent(component);
-            }
-        }
+        this.components = components;
     }
 
-    addComponent(component){
-        // Add component data to the entity
-        this.components[component.name] = component;
-    };
-
-    print () {
-        // Function to print / log information about the entity
-        console.log(JSON.stringify(this, null, 4));
-    };
 }

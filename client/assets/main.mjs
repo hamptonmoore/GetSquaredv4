@@ -1,6 +1,7 @@
 import {Entity} from './classes/Entity.js'
-import * as Components from './classes/Components.js'
+import * as Component from './classes/Component.js'
 import * as Systems from './classes/Systems.js'
+import {ComponentStore} from "./classes/ComponentStore.js";
 
 let canvas = document.getElementById("game");
 canvas.width = Math.min(document.body.clientWidth, document.body.clientHeight);
@@ -17,8 +18,8 @@ let game = {
         height: canvas.height
     },
     scale: canvas.width/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
-    entities: new Map(),
     systems: new Map(),
+    ComponentStore: new ComponentStore(),
     keys: [] // Keypresses since the last time system HandleInputs was run
 };
 /*
@@ -33,15 +34,14 @@ game.systems.set("Render", new Systems.Render(canvas));
 /*
     Lets create an Entity
 */
-let player = new Entity([
-    new Components.Body(50, 50, 20, 20),
-    new Components.CharacterController2D(1),
-    new Components.Velocity(0, 0, 3, 3, 0.8),
-    new Components.AppearanceShape("roundedFilledRect", "blue", "black", 2),
-    new Components.MarkerSummoner()
-]);
 
-game.entities.set(player.id, player);
+game.ComponentStore.addEntity(new Entity([
+    new Component.Body(50, 50, 20, 20),
+    new Component.AppearanceShape("roundedFilledRect", "blue", "black", 2),
+    new Component.CharacterController2D(1),
+    new Component.Velocity(0, 0, 3, 3, 0.8),
+    new Component.MarkerSummoner()
+]));
 
 setInterval(function() {
     for (let system of game.systems.values()){
