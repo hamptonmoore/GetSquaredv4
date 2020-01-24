@@ -32,3 +32,41 @@ export class CharacterController2D {
         this.name = "CharacterController2D";
     }
 }
+
+export class Marker {
+    constructor(owner, timestamp){
+        this.owner            = owner;
+        this.timestamp        = timestamp;
+        this.rectangleOfDeath = null;
+        this.name             = "Marker"
+    }
+}
+
+export class MarkerSummoner {
+    constructor(){
+        this.keys = {
+            "Space": false
+        };
+
+        this.firstMarkerID  = null;
+        this.secondMarkerID = null;
+
+        this.name = "MarkerSummoner";
+    }
+}
+
+export class AppearanceShape {
+    constructor(shape, fill, stroke, strokeWidth){
+        let possibleShapes = ["filledRect", "roundedFilledRect"];
+
+        if (!possibleShapes.includes(shape)){
+            throw `The provided shape of ${shape} is invalid`;
+        }
+
+        this.shape       = shape;
+        this.stroke      = stroke;
+        this.fill        = fill;
+        this.strokeWidth = strokeWidth;
+        this.name        = "AppearanceShape";
+    }
+}

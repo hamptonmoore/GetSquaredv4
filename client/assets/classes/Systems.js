@@ -1,3 +1,6 @@
+import {Entity} from "./Entity.js";
+import * as Components from "./Components.js";
+
 export class Render {
     constructor(canvas){
         this.canvas          = canvas;
@@ -7,12 +10,112 @@ export class Render {
     run(game){
         this.canvas2DContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        for (let [id, entity] of game.entities){
+        for (let entity of game.entities.values()){
             // If they have a body lets draw it
-            if (entity.components.hasOwnProperty("Body")){
-                this.canvas2DContext.fillRect(entity.components["Body"].x * game.scale, entity.components["Body"].y * game.scale, entity.components["Body"].width * game.scale, entity.components["Body"].height * game.scale);
+            if (entity.components.hasOwnProperty("Body")) {
+
+                if (entity.components.hasOwnProperty("AppearanceShape")) {
+                    let AppearanceShape = entity.components["AppearanceShape"];
+                    let Body = entity.components["Body"];
+
+                    this.canvas2DContext.fillStyle   = AppearanceShape.fill;
+                    this.canvas2DContext.strokeStyle = AppearanceShape.stroke;
+                    this.canvas2DContext.lineWidth   = AppearanceShape.strokeWidth * game.scale;
+
+                    if (AppearanceShape.shape === "filledRect") {
+
+                        this.canvas2DContext.fillRect(Body.x * game.scale, Body.y * game.scale, Body.width * game.scale, Body.height * game.scale);
+                        this.canvas2DContext.strokeRect(Body.x * game.scale, Body.y * game.scale, Body.width * game.scale, Body.height * game.scale);
+                    } else if (AppearanceShape.shape === "roundedFilledRect") {
+                        this.roundRect(Body.x * game.scale, Body.y * game.scale, Body.width * game.scale, Body.height * game.scale, 10 );
+                        this.canvas2DContext.fill();
+                        this.canvas2DContext.stroke();
+                    }
+
+                }
             }
         }
+    }
+
+    roundRect(x, y, w, h, r) {
+        if (w < 2 * r) r = w / 2;
+        if (h < 2 * r) r = h / 2;
+        this.canvas2DContext.beginPath();
+        this.canvas2DContext.moveTo(x+r, y);
+        this.canvas2DContext.arcTo(x+w, y,   x+w, y+h, r);
+        this.canvas2DContext.arcTo(x+w, y+h, x,   y+h, r);
+        this.canvas2DContext.arcTo(x,   y+h, x,   y,   r);
+        this.canvas2DContext.arcTo(x,   y,   x+w, y,   r);
+        this.canvas2DContext.closePath();
+    }
+}
+
+export class MarkerSummoner {
+    constructor(props) {
+
+    }
+
+    run(game){
+        for (let [id, entity] of game.entities){
+            if (entity.components.hasOwnProperty("Body") && entity.components.hasOwnProperty("MarkerSummoner")){
+                let Body           = entity.components["Body"];
+                let MarkerSummoner = entity.components["MarkerSummoner"];
+
+                if (MarkerSummoner.keys["Space"]){
+                    let Marker = new Entity([
+                        new Components.Body(Body.x + 2.5, Body.y + 2.5, 10, 10),
+                        new Components.AppearanceShape("roundedFilledRect", "blue", "black", 2),
+                        new Components.Marker(id, Date.now())
+                    ]);
+
+                    game.entities.set(Marker.id, Marker);
+
+                    if (MarkerSummoner.firstMarkerID == null){
+                        MarkerSummoner.firstMarkerID = Marker.id;
+                    } else if (MarkerSummoner.secondMarkerID == null){
+                        MarkerSummoner.secondMarkerID = Marker.id;
+                    } else {
+                        game.entities.delete(game.entities.get(MarkerSummoner.firstMarkerID).components["Marker"].rectangleOfDeath);
+                        game.entities.delete(MarkerSummoner.firstMarkerID);
+                        MarkerSummoner.firstMarkerID = MarkerSummoner.secondMarkerID;
+                        MarkerSummoner.secondMarkerID = Marker.id;
+                    }
+
+                    if (MarkerSummoner.firstMarkerID != null && MarkerSummoner.secondMarkerID != null){
+                        let rectangleOfDeath = this.createRectangleOfDeath(game.entities.get(MarkerSummoner.firstMarkerID), game.entities.get(MarkerSummoner.secondMarkerID));
+
+                        game.entities.get(MarkerSummoner.firstMarkerID).components["Marker"].rectangleOfDeath = rectangleOfDeath.id;
+                        game.entities.get(MarkerSummoner.secondMarkerID).components["Marker"].rectangleOfDeath = rectangleOfDeath.id;
+
+                        game.entities.set(rectangleOfDeath.id, rectangleOfDeath);
+                        console.log("Created ROD")
+                    }
+
+                    MarkerSummoner.keys["Space"] = false;
+                }
+            }
+        }
+    }
+
+    // noinspection JSMethodCanBeStatic
+    createRectangleOfDeath(firstMarker, secondMarker){
+        let firstMarkerBody = firstMarker.components["Body"];
+        let secondMarkerBody = secondMarker.components["Body"];
+
+        // lets get the lowest x and y cordinate out of the two
+        let xPosition = Math.min(firstMarkerBody.x, secondMarkerBody.x) + firstMarkerBody.width/2;
+        let yPosition = Math.min(firstMarkerBody.y, secondMarkerBody.y) + firstMarkerBody.width/2;
+
+        // This is where it gets spicy, finding the width and height
+        let width = Math.max(firstMarkerBody.x, secondMarkerBody.x) - xPosition + firstMarkerBody.width/2;
+        let height = Math.max(firstMarkerBody.y, secondMarkerBody.y) - yPosition + firstMarkerBody.width/2;
+
+        // Lets put this all together and make the rectangleOfDeath
+        return new Entity([
+            new Components.Body(xPosition, yPosition, width, height),
+            new Components.AppearanceShape("roundedFilledRect", "red", "black", 2)
+        ]);
+
     }
 }
 
@@ -21,18 +124,19 @@ export class CharacterController2D {
 
     }
 
+    // noinspection JSMethodCanBeStatic
     run(game){
-        for (let [id, entity] of game.entities){
+        for (let entity of game.entities.values()){
             // Only run if they have a CharacterController
             if (entity.components.hasOwnProperty("CharacterController2D")){
                 let CharacterController2D = entity.components["CharacterController2D"];
-                console.log(entity)
+
                 if (entity.components.hasOwnProperty("Velocity")){
                     let Velocity = entity.components["Velocity"];
 
                     if (CharacterController2D.keys["KeyW"]){
                         if (Velocity.yMomentum > 0){
-                            Velocity.yMomentum = -CharacterController2D.acceleration;;
+                            Velocity.yMomentum = -CharacterController2D.acceleration;
                         } else {
                             Velocity.yMomentum -= CharacterController2D.acceleration;
                         }
@@ -86,8 +190,9 @@ export class Velocity {
 
     }
 
+    // noinspection JSMethodCanBeStatic
     run(game) {
-        for (let [id, entity] of game.entities) {
+        for (let entity of game.entities.values()) {
             // Only run if they have a CharacterController
             if (entity.components.hasOwnProperty("Velocity") && entity.components.hasOwnProperty("Body")) {
                 let Velocity = entity.components["Velocity"];
@@ -121,8 +226,8 @@ export class ClientHandleInputs {
     run(game) {
         for (let keys of game.keys) {
             for (let entity of game.entities.values()) {
-                for (let i in entity.components) {
-                    let component = entity.components[i];
+                for (let component of Object.values(entity.components)) {
+                    //let component = entity.components[i];
                     if (this.componentsThatAcceptInputs.includes(component.name)) {
                         if (component.keys.hasOwnProperty(keys.code)) {
                             component.keys[keys.code] = keys.state;

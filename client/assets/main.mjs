@@ -24,9 +24,10 @@ let game = {
 /*
 Register the Systems
  */
-game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D"]));
+game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
 game.systems.set("CharacterController2D", new Systems.CharacterController2D());
 game.systems.set("Velocity", new Systems.Velocity());
+game.systems.set("MarkerSummoner", new Systems.MarkerSummoner());
 game.systems.set("Render", new Systems.Render(canvas));
 
 /*
@@ -35,7 +36,9 @@ game.systems.set("Render", new Systems.Render(canvas));
 let player = new Entity([
     new Components.Body(50, 50, 20, 20),
     new Components.CharacterController2D(1),
-    new Components.Velocity(0, 0, 3, 3, 0.8)
+    new Components.Velocity(0, 0, 3, 3, 0.8),
+    new Components.AppearanceShape("roundedFilledRect", "blue", "black", 2),
+    new Components.MarkerSummoner()
 ]);
 
 game.entities.set(player.id, player);
@@ -44,8 +47,6 @@ setInterval(function() {
     for (let system of game.systems.values()){
         system.run(game);
     }
-
-    //game.entities.get(test.id).components["Body"].x++;
 }, 1000/60);
 
 document.addEventListener("keydown", function(event){
