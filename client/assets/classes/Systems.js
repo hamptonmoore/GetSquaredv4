@@ -10,6 +10,18 @@ export class Render {
     run(game) {
         this.canvas2DContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        let clientID = game.ComponentStore.getAllComponentsOfComponentType("LocalPlayer").keys().next().value;
+        let clientBody = game.ComponentStore.entityGetComponent("Body", clientID);
+
+        let xOffset = -((clientBody.x * game.scale) - ((game.screen.width/2)));
+        let yOffset = -((clientBody.y * game.scale) - ((game.screen.height/2)));
+
+        this.canvas2DContext.translate(xOffset, yOffset);
+
+        this.canvas2DContext.strokeStyle = "black";
+        this.canvas2DContext.lineWidth = 10 * game.scale;
+        this.canvas2DContext.strokeRect(0, 0, game.size.width * game.scale, game.size.height * game.scale);
+
         game.ComponentStore.getAllComponentsOfComponentType("Body").forEach((Body, entityID) => {
             if (game.ComponentStore.entityHasComponent("AppearanceShape", entityID)) {
                 let AppearanceShape = game.ComponentStore.entityGetComponent("AppearanceShape", entityID);
@@ -28,7 +40,9 @@ export class Render {
                 }
 
             }
-        })
+        });
+
+        this.canvas2DContext.translate(-xOffset, -yOffset);
     }
 
     roundRect(x, y, w, h, r) {

@@ -4,8 +4,8 @@ import * as Systems from './classes/Systems.js'
 import {ComponentStore} from "./classes/ComponentStore.js";
 
 let canvas = document.getElementById("game");
-canvas.width = Math.min(document.body.clientWidth, document.body.clientHeight);
-canvas.height = Math.min(document.body.clientWidth, document.body.clientHeight);
+canvas.width = document.body.clientWidth;
+canvas.height = document.body.clientHeight;
 
 /*
     Lets create the base game state
@@ -19,7 +19,7 @@ let game = {
         width: 512,
         height: 512
     },
-    scale: canvas.width/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
+    scale: Math.min(document.body.clientWidth, document.body.clientHeight)/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
     systems: new Map(),
     ComponentStore: new ComponentStore(),
     keys: [] // Keypresses since the last time system HandleInputs was run
