@@ -2,7 +2,6 @@ import {Entity} from "./Entity.js";
 import * as Component from "./Component.js";
 
 export class Render {
-
     constructor(canvas) {
         this.canvas = canvas;
         this.canvas2DContext = canvas.getContext('2d');
@@ -46,13 +45,14 @@ export class Render {
 }
 
 export class MarkerSummoner {
-
     run(game) {
         game.ComponentStore.getAllComponentsOfComponentType("MarkerSummoner").forEach((MarkerSummoner, entityID) => {
             // If it doesnt have a body or space is not being held then return
-            if (!(game.ComponentStore.entityHasComponent("Body", entityID) && MarkerSummoner.keys["Space"])) {
+            if (!game.ComponentStore.entityHasComponent("Body", entityID) || !MarkerSummoner.keys["Space"]) {
                 return;
             }
+
+
 
             let Body = game.ComponentStore.entityGetComponent("Body", entityID);
             let Marker = new Entity([
@@ -111,7 +111,6 @@ export class MarkerSummoner {
 }
 
 export class CharacterController2D {
-
     // noinspection JSMethodCanBeStatic
     run(game) {
 
@@ -171,7 +170,6 @@ export class CharacterController2D {
 }
 
 export class Velocity {
-
     // noinspection JSMethodCanBeStatic
     run(game) {
         game.ComponentStore.getAllComponentsOfComponentType("Velocity").forEach((Velocity, entityID) => {
@@ -199,29 +197,28 @@ export class Velocity {
 The role of this system is to go through the keypress buffer (game.keys) and pass those inputs to components which use keypress
  */
 export class ClientHandleInputs {
-
     constructor(componentsThatAcceptInputs) {
         this.componentsThatAcceptInputs = componentsThatAcceptInputs;
     }
 
     run(game) {
-
-        for (let key of game.keys) {
-            for (let componentToSearchFor of this.componentsThatAcceptInputs) {
-                game.ComponentStore.getAllComponentsOfComponentType(componentToSearchFor).forEach((component) => {
-                    if (component.keys.hasOwnProperty(key.code)) {
-                        component.keys[key.code] = key.state;
-                    }
-                })
+        game.ComponentStore.getAllComponentsOfComponentType("LocalPlayer").forEach((localPlayer, localPlayerID) => {
+            for (let key of game.keys) {
+                for (let componentToSearchFor of this.componentsThatAcceptInputs) {
+                    game.ComponentStore.getAllComponentsOfComponentType(componentToSearchFor).forEach((component, componentID) => {
+                        if (component.keys.hasOwnProperty(key.code) && componentID === localPlayerID) {
+                            component.keys[key.code] = key.state;
+                        }
+                    })
+                }
             }
-        }
+        });
 
         game.keys = [];
     }
 }
 
 export class MarkerHandler {
-
     constructor() {
         this.MARKER_MAX_LIFE = (1000 * 10)
     }
@@ -250,15 +247,14 @@ export class MarkerHandler {
 }
 
 export class PlayerRespawnHandler {
-
     run(game) {
         game.ComponentStore.getAllComponentsOfComponentType("PlayerRespawn").forEach((playerRespawn, playerRespawnID) => {
             let Body = game.ComponentStore.entityGetComponent("Body", playerRespawnID);
             let Player = game.ComponentStore.entityGetComponent("Player", playerRespawnID);
             let MarkerSummoner = game.ComponentStore.entityGetComponent("MarkerSummoner", playerRespawnID);
 
-            Body.x = 256;
-            Body.y = 256;
+            Body.x = this.randomInt(0, game.size.width-Body.width);
+            Body.y = this.randomInt(0, game.size.height-Body.height);
             Player.points = 0;
 
             if (MarkerSummoner.firstMarkerID !== null) {
@@ -279,10 +275,14 @@ export class PlayerRespawnHandler {
             game.ComponentStore.entityDeleteComponent("PlayerRespawn", playerRespawnID);
         })
     }
+
+    // noinspection JSMethodCanBeStatic
+    randomInt(min, max) { // min and max included
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 }
 
 export class RectangleOfDeathHandler {
-
     run(game) {
         game.ComponentStore.getAllComponentsOfComponentType("RectangleOfDeath").forEach((rectangleOfDeath, rectangleOfDeathID) => {
             let rectangleOfDeathBody = game.ComponentStore.entityGetComponent("Body", rectangleOfDeathID);
@@ -301,6 +301,24 @@ export class RectangleOfDeathHandler {
                     game.ComponentStore.entitySetComponent("PlayerRespawn", playerID, new Component.PlayerRespawn());
                 }
             })
+        })
+    }
+}
+
+export class ConstrainBorder {
+    run(game){
+        game.ComponentStore.getAllComponentsOfComponentType("Body").forEach((Body) => {
+            if (Body.x + Body.width > game.size.width){
+                Body.x = game.size.width - Body.width;
+            } else if (Body.x < 0){
+                Body.x = 0;
+            }
+
+            if (Body.y + Body.height > game.size.height){
+                Body.y = game.size.height - Body.height;
+            } else if (Body.y < 0){
+                Body.y = 0;
+            }
         })
     }
 }

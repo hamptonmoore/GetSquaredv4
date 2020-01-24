@@ -44,6 +44,12 @@ export class Marker {
     }
 }
 
+export class LocalPlayer {
+    constructor(){
+        this.name = "LocalPlayer";
+    }
+}
+
 export class MarkerSummoner {
     constructor(){
         this.keys = {
