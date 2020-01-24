@@ -10,8 +10,10 @@ export class Body {
 
 export class Velocity {
     constructor(xMomentum, yMomentum, maxXMomentum, maxYMomentum, baseFriction){
-       this.xMomentum          = xMomentum;
-       this.yMomentum          = yMomentum;
+       // noinspection JSUnusedGlobalSymbols
+        this.xMomentum          = xMomentum;
+       // noinspection JSUnusedGlobalSymbols
+        this.yMomentum          = yMomentum;
        this.maxXMomentum       = maxXMomentum;
        this.maxYMomentum       = maxYMomentum;
        this.baseFriction       = baseFriction;
@@ -48,7 +50,9 @@ export class MarkerSummoner {
             "Space": false
         };
 
+        // noinspection JSUnusedGlobalSymbols
         this.firstMarkerID  = null;
+        // noinspection JSUnusedGlobalSymbols
         this.secondMarkerID = null;
 
         this.name = "MarkerSummoner";
@@ -68,5 +72,26 @@ export class AppearanceShape {
         this.fill        = fill;
         this.strokeWidth = strokeWidth;
         this.name        = "AppearanceShape";
+    }
+}
+
+export class Player {
+    constructor(){
+        // noinspection JSUnusedGlobalSymbols
+        this.points = 0;
+        this.name   = "Player";
+    }
+}
+
+export class RectangleOfDeath {
+    constructor(owner){
+        this.owner = owner;
+        this.name  = "RectangleOfDeath"
+    }
+}
+
+export class PlayerRespawn {
+    constructor(){
+        this.name  = "PlayerRespawn"
     }
 }

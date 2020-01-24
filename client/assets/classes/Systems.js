@@ -2,6 +2,7 @@ import {Entity} from "./Entity.js";
 import * as Component from "./Component.js";
 
 export class Render {
+
     constructor(canvas) {
         this.canvas = canvas;
         this.canvas2DContext = canvas.getContext('2d');
@@ -45,13 +46,10 @@ export class Render {
 }
 
 export class MarkerSummoner {
-    constructor(props) {
-
-    }
 
     run(game) {
         game.ComponentStore.getAllComponentsOfComponentType("MarkerSummoner").forEach((MarkerSummoner, entityID) => {
-            // If it doesnt have a body or space isnt being held then return
+            // If it doesnt have a body or space is not being held then return
             if (!(game.ComponentStore.entityHasComponent("Body", entityID) && MarkerSummoner.keys["Space"])) {
                 return;
             }
@@ -78,23 +76,23 @@ export class MarkerSummoner {
             if (MarkerSummoner.firstMarkerID != null && MarkerSummoner.secondMarkerID != null) {
                 let rectangleOfDeath = this.createRectangleOfDeath(
                     game.ComponentStore.entityGetComponent("Body", MarkerSummoner.firstMarkerID),
-                    game.ComponentStore.entityGetComponent("Body", MarkerSummoner.secondMarkerID)
+                    game.ComponentStore.entityGetComponent("Body", MarkerSummoner.secondMarkerID),
+                    entityID
                 );
 
                 game.ComponentStore.entityGetComponent("Marker", MarkerSummoner.firstMarkerID).rectangleOfDeath = rectangleOfDeath.id;
                 game.ComponentStore.entityGetComponent("Marker", MarkerSummoner.secondMarkerID).rectangleOfDeath = rectangleOfDeath.id;
 
                 game.ComponentStore.addEntity(rectangleOfDeath);
-                console.log("Created ROD")
             }
             MarkerSummoner.keys["Space"] = false;
         })
     }
 
     // noinspection JSMethodCanBeStatic
-    createRectangleOfDeath(firstMarkerBody, secondMarkerBody) {
+    createRectangleOfDeath(firstMarkerBody, secondMarkerBody, owner) {
 
-        // lets get the lowest x and y cordinate out of the two
+        // lets get the lowest x and y coordinate out of the two
         let xPosition = Math.min(firstMarkerBody.x, secondMarkerBody.x) + firstMarkerBody.width / 2;
         let yPosition = Math.min(firstMarkerBody.y, secondMarkerBody.y) + firstMarkerBody.width / 2;
 
@@ -105,16 +103,14 @@ export class MarkerSummoner {
         // Lets put this all together and make the rectangleOfDeath
         return new Entity([
             new Component.Body(xPosition, yPosition, width, height),
-            new Component.AppearanceShape("roundedFilledRect", "red", "black", 2)
+            new Component.AppearanceShape("roundedFilledRect", "red", "black", 2),
+            new Component.RectangleOfDeath(owner)
         ]);
 
     }
 }
 
 export class CharacterController2D {
-    constructor() {
-
-    }
 
     // noinspection JSMethodCanBeStatic
     run(game) {
@@ -175,9 +171,6 @@ export class CharacterController2D {
 }
 
 export class Velocity {
-    constructor() {
-
-    }
 
     // noinspection JSMethodCanBeStatic
     run(game) {
@@ -206,6 +199,7 @@ export class Velocity {
 The role of this system is to go through the keypress buffer (game.keys) and pass those inputs to components which use keypress
  */
 export class ClientHandleInputs {
+
     constructor(componentsThatAcceptInputs) {
         this.componentsThatAcceptInputs = componentsThatAcceptInputs;
     }
@@ -227,7 +221,8 @@ export class ClientHandleInputs {
 }
 
 export class MarkerHandler {
-    constructor(){
+
+    constructor() {
         this.MARKER_MAX_LIFE = (1000 * 10)
     }
 
@@ -235,21 +230,77 @@ export class MarkerHandler {
         game.ComponentStore.getAllComponentsOfComponentType("Marker").forEach((marker, markerID) => {
             // If its over 20 seconds old lets kill it
             if (Date.now() > marker.timestamp + this.MARKER_MAX_LIFE) {
-                if (marker.rectangleOfDeath != null){
+                if (marker.rectangleOfDeath != null) {
                     game.ComponentStore.deleteEntity(marker.rectangleOfDeath);
                 }
 
                 let owner = game.ComponentStore.entityGetComponent("MarkerSummoner", marker.owner);
 
-                if (owner.firstMarkerID === markerID){
+                if (owner.firstMarkerID === markerID) {
                     owner.firstMarkerID = null;
-                } else if (owner.secondMarkerID === markerID){
+                } else if (owner.secondMarkerID === markerID) {
                     owner.secondMarkerID = null;
                 }
 
                 game.ComponentStore.deleteEntity(markerID);
 
             }
+        })
+    }
+}
+
+export class PlayerRespawnHandler {
+
+    run(game) {
+        game.ComponentStore.getAllComponentsOfComponentType("PlayerRespawn").forEach((playerRespawn, playerRespawnID) => {
+            let Body = game.ComponentStore.entityGetComponent("Body", playerRespawnID);
+            let Player = game.ComponentStore.entityGetComponent("Player", playerRespawnID);
+            let MarkerSummoner = game.ComponentStore.entityGetComponent("MarkerSummoner", playerRespawnID);
+
+            Body.x = 256;
+            Body.y = 256;
+            Player.points = 0;
+
+            if (MarkerSummoner.firstMarkerID !== null) {
+                game.ComponentStore.deleteEntity(MarkerSummoner.firstMarkerID);
+            }
+
+            if (MarkerSummoner.secondMarkerID !== null) {
+                if (game.ComponentStore.entityGetComponent("Marker", MarkerSummoner.secondMarkerID).rectangleOfDeath !== null) {
+                    game.ComponentStore.deleteEntity(game.ComponentStore.entityGetComponent("Marker", MarkerSummoner.secondMarkerID).rectangleOfDeath);
+                }
+
+                game.ComponentStore.deleteEntity(MarkerSummoner.secondMarkerID);
+            }
+
+            MarkerSummoner.firstMarkerID = null;
+            MarkerSummoner.secondMarkerID = null;
+
+            game.ComponentStore.entityDeleteComponent("PlayerRespawn", playerRespawnID);
+        })
+    }
+}
+
+export class RectangleOfDeathHandler {
+
+    run(game) {
+        game.ComponentStore.getAllComponentsOfComponentType("RectangleOfDeath").forEach((rectangleOfDeath, rectangleOfDeathID) => {
+            let rectangleOfDeathBody = game.ComponentStore.entityGetComponent("Body", rectangleOfDeathID);
+            game.ComponentStore.getAllComponentsOfComponentType("Player").forEach((player, playerID) => {
+                if (playerID === rectangleOfDeath.owner) {
+                    return;
+                }
+
+                let playerBody = game.ComponentStore.entityGetComponent("Body", playerID);
+
+                if (playerBody.x < rectangleOfDeathBody.x + rectangleOfDeathBody.width &&
+                    playerBody.x + playerBody.width > rectangleOfDeathBody.x &&
+                    playerBody.y < rectangleOfDeathBody.y + rectangleOfDeathBody.height &&
+                    playerBody.y + playerBody.height > rectangleOfDeathBody.y) {
+
+                    game.ComponentStore.entitySetComponent("PlayerRespawn", playerID, new Component.PlayerRespawn());
+                }
+            })
         })
     }
 }

@@ -5,7 +5,7 @@
  *  Here we implement an entity as a container of data (container of components)
  *
  * ========================================================================= */
-export class Entity{
+export class Entity {
 
     constructor(components) {
         // Generate a pseudo random ID

@@ -7,8 +7,6 @@ let canvas = document.getElementById("game");
 canvas.width = Math.min(document.body.clientWidth, document.body.clientHeight);
 canvas.height = Math.min(document.body.clientWidth, document.body.clientHeight);
 
-console.log(canvas.width);
-
 /*
     Lets create the base game state
 */
@@ -25,11 +23,13 @@ let game = {
 /*
 Register the Systems
  */
+game.systems.set("PlayerRespawnHandler", new Systems.PlayerRespawnHandler());
 game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
 game.systems.set("CharacterController2D", new Systems.CharacterController2D());
 game.systems.set("Velocity", new Systems.Velocity());
 game.systems.set("MarkerHandler", new Systems.MarkerHandler());
 game.systems.set("MarkerSummoner", new Systems.MarkerSummoner());
+game.systems.set("RectangleOfDeathHandler", new Systems.RectangleOfDeathHandler());
 game.systems.set("Render", new Systems.Render(canvas));
 
 /*
@@ -41,7 +41,9 @@ game.ComponentStore.addEntity(new Entity([
     new Component.AppearanceShape("roundedFilledRect", "blue", "black", 2),
     new Component.CharacterController2D(1),
     new Component.Velocity(0, 0, 3, 3, 0.8),
-    new Component.MarkerSummoner()
+    new Component.MarkerSummoner(),
+    new Component.Player(),
+    new Component.PlayerRespawn()
 ]));
 
 setInterval(function() {
