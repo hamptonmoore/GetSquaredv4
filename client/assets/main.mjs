@@ -28,6 +28,7 @@ Register the Systems
 game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
 game.systems.set("CharacterController2D", new Systems.CharacterController2D());
 game.systems.set("Velocity", new Systems.Velocity());
+game.systems.set("MarkerHandler", new Systems.MarkerHandler());
 game.systems.set("MarkerSummoner", new Systems.MarkerSummoner());
 game.systems.set("Render", new Systems.Render(canvas));
 

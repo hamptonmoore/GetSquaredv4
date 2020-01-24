@@ -19,7 +19,6 @@ export class Render {
                 this.canvas2DContext.lineWidth = AppearanceShape.strokeWidth * game.scale;
 
                 if (AppearanceShape.shape === "filledRect") {
-
                     this.canvas2DContext.fillRect(Body.x * game.scale, Body.y * game.scale, Body.width * game.scale, Body.height * game.scale);
                     this.canvas2DContext.strokeRect(Body.x * game.scale, Body.y * game.scale, Body.width * game.scale, Body.height * game.scale);
                 } else if (AppearanceShape.shape === "roundedFilledRect") {
@@ -224,5 +223,33 @@ export class ClientHandleInputs {
         }
 
         game.keys = [];
+    }
+}
+
+export class MarkerHandler {
+    constructor(){
+        this.MARKER_MAX_LIFE = (1000 * 10)
+    }
+
+    run(game) {
+        game.ComponentStore.getAllComponentsOfComponentType("Marker").forEach((marker, markerID) => {
+            // If its over 20 seconds old lets kill it
+            if (Date.now() > marker.timestamp + this.MARKER_MAX_LIFE) {
+                if (marker.rectangleOfDeath != null){
+                    game.ComponentStore.deleteEntity(marker.rectangleOfDeath);
+                }
+
+                let owner = game.ComponentStore.entityGetComponent("MarkerSummoner", marker.owner);
+
+                if (owner.firstMarkerID === markerID){
+                    owner.firstMarkerID = null;
+                } else if (owner.secondMarkerID === markerID){
+                    owner.secondMarkerID = null;
+                }
+
+                game.ComponentStore.deleteEntity(markerID);
+
+            }
+        })
     }
 }

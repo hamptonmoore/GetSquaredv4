@@ -12,7 +12,7 @@ export class ComponentStore {
     }
 
     getAllComponentsOfComponentType(component){
-        return this.components.get(component);
+        return this.components.get(component) || new Map();
     }
 
     entityGetComponent(component, entityID){
