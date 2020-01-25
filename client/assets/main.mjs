@@ -2,7 +2,7 @@ import {Entity} from './classes/Entity.js'
 import * as Component from './classes/Component.js'
 import * as Systems from './classes/Systems.js'
 import {ComponentStore} from "./classes/ComponentStore.js";
-import * as nameGenerator from './classes/nameGenerator.js'
+import * as randomGenerators from './classes/randomGenerators.js'
 
 let canvas = document.getElementById("game");
 canvas.width = document.body.clientWidth;
@@ -44,7 +44,8 @@ game.systems.set("RenderScoreboard", new Systems.RenderScoreboard(canvas));
 */
 
 // Player
-document.getElementById("username").setAttribute("placeholder", localStorage.getItem('username') || nameGenerator.generateRandomName());
+document.getElementById("username").setAttribute("placeholder", localStorage.getItem('username') || randomGenerators.generateName());
+document.getElementById("color").setAttribute("value", localStorage.getItem('color') || randomGenerators.generateColor());
 
 
 // Bot
@@ -52,11 +53,11 @@ document.getElementById("username").setAttribute("placeholder", localStorage.get
 for (let i = 0; i < 30; i++) {
     game.ComponentStore.addEntity(new Entity([
         new Component.Body(0, 0, 20, 20),
-        new Component.AppearanceShape("roundedFilledRect", "random", "black", 2),
+        new Component.AppearanceShape("roundedFilledRect", randomGenerators.generateColor(), "black", 2),
         new Component.Velocity(0, 0, 3, 3, 0.8),
         new Component.CharacterController2D(1),
         new Component.MarkerSummoner(),
-        new Component.Player(nameGenerator.generateRandomName()),
+        new Component.Player(randomGenerators.generateName()),
         new Component.PlayerRespawn(),
         new Component.BotControl()
     ]));
@@ -78,10 +79,10 @@ document.addEventListener("keyup", function(event){
 
 document.getElementById("startGame").addEventListener("click", function(){
     let username = document.getElementById("username").value || document.getElementById("username").getAttribute("placeholder");
-
+    let color = document.getElementById("color").value;
     game.ComponentStore.addEntity(new Entity([
         new Component.Body(50, 50, 20, 20),
-        new Component.AppearanceShape("roundedFilledRect", "random", "black", 2),
+        new Component.AppearanceShape("roundedFilledRect", color, "black", 2),
         new Component.CharacterController2D(1),
         new Component.Velocity(0, 0, 3, 3, 0.8),
         new Component.MarkerSummoner(),
@@ -90,5 +91,6 @@ document.getElementById("startGame").addEventListener("click", function(){
         new Component.PlayerRespawn()
     ]));
     localStorage.setItem('username', username);
+    localStorage.setItem('color', color);
     document.getElementById("main-menu").style.visibility = 'hidden';
 });

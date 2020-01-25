@@ -73,10 +73,6 @@ export class AppearanceShape {
             throw `The provided shape of ${shape} is invalid`;
         }
 
-        if (fill === "random" || fill === " " || fill === ""){
-            fill = this.randomColor();
-        }
-
         this.shape       = shape;
         this.stroke      = stroke;
         this.fill        = fill;
