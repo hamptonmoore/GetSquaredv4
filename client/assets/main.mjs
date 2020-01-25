@@ -37,7 +37,7 @@ game.systems.set("MarkerHandler", new Systems.MarkerHandler());
 game.systems.set("MarkerSummoner", new Systems.MarkerSummoner());
 game.systems.set("RectangleOfDeathHandler", new Systems.RectangleOfDeathHandler());
 game.systems.set("Render", new Systems.Render(canvas));
-
+game.systems.set("RenderScoreboard", new Systems.RenderScoreboard(canvas));
 /*
     Lets create an Entity
 */

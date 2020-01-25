@@ -15,7 +15,7 @@ export class ComponentStore {
         return this.components.get(component) || new Map();
     }
 
-    getComponentsFromEntity(component, entityID){
+    getComponentFromEntity(component, entityID){
         return this.components.get(component).get(entityID);
     }
 

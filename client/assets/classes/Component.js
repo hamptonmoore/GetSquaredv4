@@ -1,3 +1,5 @@
+import * as nameGenerator from './nameGenerator.js'
+
 export class Body {
     constructor(x, y, width, height){
         this.x      = x;
@@ -85,13 +87,13 @@ export class AppearanceShape {
     }
 
     randomColor(){
-        var h = this.randomInterger(0, 360);
-        var s = this.randomInterger(42, 98);
-        var l = this.randomInterger(40, 90);
+        let h = this.randomInteger(0, 360);
+        let s = this.randomInteger(42, 98);
+        let l = this.randomInteger(40, 90);
         return `hsl(${h},${s}%,${l}%)`;
     }
 
-    randomInterger = function(min, max){
+    randomInteger = function(min, max){
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 }
@@ -100,8 +102,11 @@ export class Player {
     constructor(){
         // noinspection JSUnusedGlobalSymbols
         this.points = 0;
+        this.playerName = nameGenerator.generateRandomName();
         this.name   = "Player";
     }
+
+
 }
 
 export class RectangleOfDeath {
@@ -119,6 +124,7 @@ export class PlayerRespawn {
 
 export class BotControl {
     constructor(){
+        // noinspection JSUnusedGlobalSymbols
         this.target = null;
         this.name     = "BotControl";
     }
