@@ -10,17 +10,50 @@ export class Render {
     run(game) {
         this.canvas2DContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // Get the location of the player
         let clientID = game.ComponentStore.getAllComponentsOfComponentType("LocalPlayer").keys().next().value;
         let clientBody = game.ComponentStore.entityGetComponent("Body", clientID);
 
+        // Do math to move the player to the center of the screen
         let xOffset = -((clientBody.x * game.scale) - ((game.screen.width/2)));
         let yOffset = -((clientBody.y * game.scale) - ((game.screen.height/2)));
 
-        this.canvas2DContext.translate(xOffset, yOffset);
+        // Before that lets draw the grid
+        this.canvas2DContext.strokeStyle = "gray";
+        this.canvas2DContext.lineWidth = 1 * game.scale;
 
+        let extraSpace = (60 * game.scale);
+        let gridSpace = 60 * game.scale;
+
+        for (let i = 0; i < game.screen.width + extraSpace; i += gridSpace){
+            this.canvas2DContext.beginPath();
+
+            this.canvas2DContext.moveTo(i  - ((clientBody.x % 60) * game.scale),0);
+
+            this.canvas2DContext.lineTo(i  - ((clientBody.x % 60) * game.scale),game.screen.height * game.scale);
+
+            this.canvas2DContext.stroke();
+
+            this.canvas2DContext.closePath();
+        }
+
+        for (let i = 0; i < game.screen.height + (60 * game.scale); i += gridSpace){
+            this.canvas2DContext.beginPath();
+
+            this.canvas2DContext.moveTo(0,i  - ((clientBody.y % 60) * game.scale));
+
+            this.canvas2DContext.lineTo(game.screen.height * game.scale + extraSpace,i  - ((clientBody.y % 60) * game.scale));
+
+            this.canvas2DContext.stroke();
+
+            this.canvas2DContext.closePath();
+        }
+
+        // Move the player to the center
+        this.canvas2DContext.translate(xOffset, yOffset);
         this.canvas2DContext.strokeStyle = "black";
         this.canvas2DContext.lineWidth = 10 * game.scale;
-        this.canvas2DContext.strokeRect(0, 0, game.size.width * game.scale, game.size.height * game.scale);
+        this.canvas2DContext.strokeRect(0 , 0, game.size.width * game.scale, game.size.height * game.scale);
 
         game.ComponentStore.getAllComponentsOfComponentType("Body").forEach((Body, entityID) => {
             if (game.ComponentStore.entityHasComponent("AppearanceShape", entityID)) {
@@ -42,6 +75,7 @@ export class Render {
             }
         });
 
+        // Move the the canvas back
         this.canvas2DContext.translate(-xOffset, -yOffset);
     }
 
@@ -319,8 +353,13 @@ export class RectangleOfDeathHandler {
     }
 }
 
-export class ConstrainBorder {
+export class BorderControl {
     run(game){
+        this.loopBorder(game);
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    constrainBorder(game){
         game.ComponentStore.getAllComponentsOfComponentType("Body").forEach((Body) => {
             if (Body.x + Body.width > game.size.width){
                 Body.x = game.size.width - Body.width;
@@ -332,6 +371,22 @@ export class ConstrainBorder {
                 Body.y = game.size.height - Body.height;
             } else if (Body.y < 0){
                 Body.y = 0;
+            }
+        })
+    }
+
+    loopBorder(game){
+        game.ComponentStore.getAllComponentsOfComponentType("Body").forEach((Body) => {
+            if (Body.x + Body.width > game.size.width){
+                Body.x = 0;
+            } else if (Body.x < 0){
+                Body.x = game.size.width - Body.width;
+            }
+
+            if (Body.y + Body.height > game.size.height){
+                Body.y = 0;
+            } else if (Body.y < 0){
+                Body.y = game.size.height - Body.height;
             }
         })
     }

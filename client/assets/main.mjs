@@ -16,8 +16,8 @@ let game = {
         height: canvas.height
     },
     size: {
-        width: 512,
-        height: 512
+        width: 2048,
+        height: 2048
     },
     scale: Math.min(document.body.clientWidth, document.body.clientHeight)/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
     systems: new Map(),
@@ -31,7 +31,7 @@ game.systems.set("PlayerRespawnHandler", new Systems.PlayerRespawnHandler());
 game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
 game.systems.set("CharacterController2D", new Systems.CharacterController2D());
 game.systems.set("Velocity", new Systems.Velocity());
-game.systems.set("ConstrainBorder", new Systems.ConstrainBorder());
+game.systems.set("BorderControl", new Systems.BorderControl());
 game.systems.set("MarkerHandler", new Systems.MarkerHandler());
 game.systems.set("MarkerSummoner", new Systems.MarkerSummoner());
 game.systems.set("RectangleOfDeathHandler", new Systems.RectangleOfDeathHandler());
