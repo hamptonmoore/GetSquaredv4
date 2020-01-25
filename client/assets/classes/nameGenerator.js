@@ -28,5 +28,5 @@ let randomInteger = function (min, max){
 };
 
 export function generateRandomName() {
-    return nameList[randomInteger(0, nameList.length)] + nameList[randomInteger(0, nameList.length)];
+    return nameList[randomInteger(0, nameList.length-1)] + nameList[randomInteger(0, nameList.length-1)];
 }

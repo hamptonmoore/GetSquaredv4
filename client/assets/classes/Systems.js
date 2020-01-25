@@ -73,6 +73,15 @@ export class Render {
                 }
 
             }
+
+            if (game.ComponentStore.doesEntityHaveComponent("Player", entityID)) {
+                let Player = game.ComponentStore.getComponentFromEntity("Player", entityID);
+
+                this.canvas2DContext.font = `${8 * game.scale}px Lucida Console, Monaco, monospace`;
+                this.canvas2DContext.fillStyle = "black";
+                this.canvas2DContext.fillText(`${Player.playerName}`, (Body.x - (Player.playerName.length/2 * 2.5)) * game.scale, (Body.y - 5) * game.scale);
+
+            }
         });
 
         // Move the the canvas back
