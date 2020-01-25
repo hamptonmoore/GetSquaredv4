@@ -12,7 +12,7 @@ export class Render {
 
         // Get the location of the player
         let clientID = game.ComponentStore.getAllComponentsOfComponentType("LocalPlayer").keys().next().value;
-        let clientBody = game.ComponentStore.getComponentFromEntity("Body", clientID);
+        let clientBody = game.ComponentStore.getComponentFromEntity("Body", clientID) || {x: game.size.width/2, y: game.size.height/2};
 
         // Do math to move the player to the center of the screen
         let xOffset = -((clientBody.x * game.scale) - ((game.screen.width/2)));

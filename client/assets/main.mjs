@@ -2,6 +2,7 @@ import {Entity} from './classes/Entity.js'
 import * as Component from './classes/Component.js'
 import * as Systems from './classes/Systems.js'
 import {ComponentStore} from "./classes/ComponentStore.js";
+import * as nameGenerator from './classes/nameGenerator.js'
 
 let canvas = document.getElementById("game");
 canvas.width = document.body.clientWidth;
@@ -43,16 +44,7 @@ game.systems.set("RenderScoreboard", new Systems.RenderScoreboard(canvas));
 */
 
 // Player
-game.ComponentStore.addEntity(new Entity([
-    new Component.Body(50, 50, 20, 20),
-    new Component.AppearanceShape("roundedFilledRect", "random", "black", 2),
-    new Component.CharacterController2D(1),
-    new Component.Velocity(0, 0, 3, 3, 0.8),
-    new Component.MarkerSummoner(),
-    new Component.Player(),
-    new Component.LocalPlayer(),
-    new Component.PlayerRespawn()
-]));
+document.getElementById("username").setAttribute("placeholder", localStorage.getItem('username') || nameGenerator.generateRandomName());
 
 
 // Bot
@@ -64,7 +56,7 @@ for (let i = 0; i < 30; i++) {
         new Component.Velocity(0, 0, 3, 3, 0.8),
         new Component.CharacterController2D(1),
         new Component.MarkerSummoner(),
-        new Component.Player(),
+        new Component.Player(nameGenerator.generateRandomName()),
         new Component.PlayerRespawn(),
         new Component.BotControl()
     ]));
@@ -82,4 +74,21 @@ document.addEventListener("keydown", function(event){
 
 document.addEventListener("keyup", function(event){
     game.keys.push({code: event.code, state: false});
+});
+
+document.getElementById("startGame").addEventListener("click", function(){
+    let username = document.getElementById("username").value || document.getElementById("username").getAttribute("placeholder");
+
+    game.ComponentStore.addEntity(new Entity([
+        new Component.Body(50, 50, 20, 20),
+        new Component.AppearanceShape("roundedFilledRect", "random", "black", 2),
+        new Component.CharacterController2D(1),
+        new Component.Velocity(0, 0, 3, 3, 0.8),
+        new Component.MarkerSummoner(),
+        new Component.Player(username),
+        new Component.LocalPlayer(),
+        new Component.PlayerRespawn()
+    ]));
+    localStorage.setItem('username', username);
+    document.getElementById("main-menu").style.visibility = 'hidden';
 });

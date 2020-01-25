@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./assets/bootstrap.min.css">
     <style>
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
+            font-family: "Lucida Console, Monaco, monospace", monospace;
         }
         canvas {
             display: block;
@@ -14,6 +17,29 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        #main-menu {
+            font-family: "Lucida Console, Monaco, monospace", monospace;
+            z-index: 10;
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            /* bring your own prefixes */
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        #main-menu>h1 {
+            font-size: 5em;
+            -webkit-text-stroke: 1px black;
+
+            /* If we weren't using text-shadow, we'd set a fallback color
+                and use this to set color instead
+                -webkit-text-fill-color: white; */
+
+            color: white;
         }
 
     </style>
@@ -24,5 +50,26 @@
     <script type="module" src="./assets/main.mjs"></script>
 
     <canvas id="game"></canvas>
+
+    <div id="main-menu">
+        <h1>Get Squared</h1>
+        <br />
+<!--        <div class="form-group">-->
+<!--            <label for="serverSelect">Select Server</label>-->
+<!--            <select class="form-control" id="serverSelect">-->
+<!--                <option value="wss://getsquared.voyager1.hampton.pw">EU-1</option>-->
+<!--                <option value="wss:///getsquared-europe.herokuapp.com">EU-2</option>-->
+<!--                <option value="wss://getsquared.herokuapp.com">US-East-1</option>-->
+<!--            </select>-->
+<!--        </div>-->
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="">
+        </div>
+
+        <button id="startGame" class="btn btn-primary btn-lg btn-block">Start</button>
+    </div>
+
 </body>
 </html>

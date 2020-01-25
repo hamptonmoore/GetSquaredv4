@@ -1,5 +1,3 @@
-import * as nameGenerator from './nameGenerator.js'
-
 export class Body {
     constructor(x, y, width, height){
         this.x      = x;
@@ -75,7 +73,7 @@ export class AppearanceShape {
             throw `The provided shape of ${shape} is invalid`;
         }
 
-        if (fill === "random"){
+        if (fill === "random" || fill === " " || fill === ""){
             fill = this.randomColor();
         }
 
@@ -99,10 +97,10 @@ export class AppearanceShape {
 }
 
 export class Player {
-    constructor(){
+    constructor(playerName){
         // noinspection JSUnusedGlobalSymbols
         this.points = 0;
-        this.playerName = nameGenerator.generateRandomName();
+        this.playerName = playerName;
         this.name   = "Player";
     }
 
