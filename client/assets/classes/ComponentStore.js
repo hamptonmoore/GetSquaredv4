@@ -3,11 +3,11 @@ export class ComponentStore {
         this.components = new Map();
     }
 
-    entityHasComponent(component, entityID){
+    doesEntityHaveComponent(component, entityID){
         return this.components.get(component).has(entityID);
     }
 
-    entityDeleteComponent(component, entityID){
+    deleteComponentsFromEntity(component, entityID){
         return this.components.get(component).delete(entityID);
     }
 
@@ -15,17 +15,17 @@ export class ComponentStore {
         return this.components.get(component) || new Map();
     }
 
-    entityGetComponent(component, entityID){
+    getComponentsFromEntity(component, entityID){
         return this.components.get(component).get(entityID);
     }
 
-    entitySetComponent(component, entityID, entityComponent){
+    setComponentsFromEntity(component, entityID, entityComponent){
         this.components.get(component).set(entityID, entityComponent);
     }
 
     deleteEntity(entityID){
         for (let componentName of this.components.keys()){
-            this.entityDeleteComponent(componentName, entityID);
+            this.deleteComponentsFromEntity(componentName, entityID);
         }
     }
 
@@ -36,7 +36,7 @@ export class ComponentStore {
                 this.components.set(component.name, new Map());
             }
 
-            this.entitySetComponent(component.name, entity.id, component);
+            this.setComponentsFromEntity(component.name, entity.id, component);
         }
     }
 }

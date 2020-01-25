@@ -73,12 +73,27 @@ export class AppearanceShape {
             throw `The provided shape of ${shape} is invalid`;
         }
 
+        if (fill === "random"){
+            fill = this.randomColor();
+        }
+
         this.shape       = shape;
         this.stroke      = stroke;
         this.fill        = fill;
         this.strokeWidth = strokeWidth;
         this.name        = "AppearanceShape";
     }
+
+    randomColor(){
+        var h = this.randomInterger(0, 360);
+        var s = this.randomInterger(42, 98);
+        var l = this.randomInterger(40, 90);
+        return `hsl(${h},${s}%,${l}%)`;
+    }
+
+    randomInterger = function(min, max){
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
 }
 
 export class Player {
@@ -99,5 +114,12 @@ export class RectangleOfDeath {
 export class PlayerRespawn {
     constructor(){
         this.name  = "PlayerRespawn"
+    }
+}
+
+export class BotControl {
+    constructor(){
+        this.target = null;
+        this.name     = "BotControl";
     }
 }

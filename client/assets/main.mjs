@@ -29,6 +29,7 @@ Register the Systems
  */
 game.systems.set("PlayerRespawnHandler", new Systems.PlayerRespawnHandler());
 game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
+game.systems.set("BotControlHandler", new Systems.BotControlHandler());
 game.systems.set("CharacterController2D", new Systems.CharacterController2D());
 game.systems.set("Velocity", new Systems.Velocity());
 game.systems.set("BorderControl", new Systems.BorderControl());
@@ -41,9 +42,10 @@ game.systems.set("Render", new Systems.Render(canvas));
     Lets create an Entity
 */
 
+// Player
 game.ComponentStore.addEntity(new Entity([
     new Component.Body(50, 50, 20, 20),
-    new Component.AppearanceShape("roundedFilledRect", "blue", "black", 2),
+    new Component.AppearanceShape("roundedFilledRect", "random", "black", 2),
     new Component.CharacterController2D(1),
     new Component.Velocity(0, 0, 3, 3, 0.8),
     new Component.MarkerSummoner(),
@@ -51,6 +53,22 @@ game.ComponentStore.addEntity(new Entity([
     new Component.LocalPlayer(),
     new Component.PlayerRespawn()
 ]));
+
+
+// Bot
+
+for (let i = 0; i < 30; i++) {
+    game.ComponentStore.addEntity(new Entity([
+        new Component.Body(0, 0, 20, 20),
+        new Component.AppearanceShape("roundedFilledRect", "random", "black", 2),
+        new Component.Velocity(0, 0, 3, 3, 0.8),
+        new Component.CharacterController2D(1),
+        new Component.MarkerSummoner(),
+        new Component.Player(),
+        new Component.PlayerRespawn(),
+        new Component.BotControl()
+    ]));
+}
 
 setInterval(function() {
     for (let system of game.systems.values()){
@@ -64,15 +82,4 @@ document.addEventListener("keydown", function(event){
 
 document.addEventListener("keyup", function(event){
     game.keys.push({code: event.code, state: false});
-});
-
-document.getElementById("game").addEventListener("click", function(event){
-    console.log(event);
-    game.ComponentStore.addEntity(new Entity([
-        new Component.Body(event.clientX / game.scale, event.clientY / game.scale, 20, 20),
-        new Component.AppearanceShape("roundedFilledRect", "blue", "black", 2),
-        new Component.Velocity(0, 0, 3, 3, 0.8),
-        new Component.MarkerSummoner(),
-        new Component.Player()
-    ]));
 });
