@@ -1,5 +1,5 @@
-import {Entity} from "./Entity.js";
-import * as Component from "./Components.js";
+import * as Assemblages from './Assemblages.js'
+import * as Components from "./Components.js";
 
 export class Render {
     constructor(canvas) {
@@ -164,11 +164,7 @@ export class MarkerSummoner {
             let Body = game.ComponentStore.getComponentByEntityId("Body", entityID);
             let AppearanceShape = game.ComponentStore.getComponentByEntityId("AppearanceShape", entityID);
 
-            let Marker = new Entity([
-                new Component.Body(Body.x + 2.5, Body.y + 2.5, 10, 10),
-                new Component.AppearanceShape("roundedFilledRect", AppearanceShape.fill, AppearanceShape.stroke, 2),
-                new Component.Marker(entityID, Date.now())
-            ]);
+            let Marker = new Assemblages.Marker(Body.x, Body.y, AppearanceShape.fill, AppearanceShape.stroke, entityID);
 
             game.ComponentStore.addEntity(Marker);
 
@@ -203,20 +199,15 @@ export class MarkerSummoner {
     createRectangleOfDeath(firstMarkerBody, secondMarkerBody, owner, AppearanceShape) {
 
         // lets get the lowest x and y coordinate out of the two
-        let xPosition = Math.min(firstMarkerBody.x, secondMarkerBody.x) + firstMarkerBody.width / 2;
-        let yPosition = Math.min(firstMarkerBody.y, secondMarkerBody.y) + firstMarkerBody.width / 2;
+        let x = Math.min(firstMarkerBody.x, secondMarkerBody.x) + firstMarkerBody.width / 2;
+        let y = Math.min(firstMarkerBody.y, secondMarkerBody.y) + firstMarkerBody.width / 2;
 
         // This is where it gets spicy, finding the width and height
-        let width = Math.max(firstMarkerBody.x, secondMarkerBody.x) - xPosition + firstMarkerBody.width / 2;
-        let height = Math.max(firstMarkerBody.y, secondMarkerBody.y) - yPosition + firstMarkerBody.width / 2;
+        let width = Math.max(firstMarkerBody.x, secondMarkerBody.x) - x + firstMarkerBody.width / 2;
+        let height = Math.max(firstMarkerBody.y, secondMarkerBody.y) - y + firstMarkerBody.width / 2;
 
         // Lets put this all together and make the rectangleOfDeath
-        return new Entity([
-            new Component.Body(xPosition, yPosition, width, height),
-            new Component.AppearanceShape("roundedFilledRect", AppearanceShape.fill, "black", 2),
-            new Component.RectangleOfDeath(owner)
-        ]);
-
+        return new Assemblages.RectangleOfDeath(x, y, width, height, AppearanceShape.fill, owner)
     }
 }
 
@@ -410,7 +401,7 @@ export class RectangleOfDeathHandler {
                     playerBody.y < rectangleOfDeathBody.y + rectangleOfDeathBody.height &&
                     playerBody.y + playerBody.height > rectangleOfDeathBody.y) {
 
-                    game.ComponentStore.setComponentByEntityId("PlayerRespawn", playerID, new Component.PlayerRespawn());
+                    game.ComponentStore.setComponentByEntityId("PlayerRespawn", playerID, new Components.PlayerRespawn());
 
                     if (game.ComponentStore.checkComponentByEntityId("Player", rectangleOfDeath.owner)){
                         game.ComponentStore.getComponentByEntityId("Player", rectangleOfDeath.owner).points += 1;
@@ -468,8 +459,12 @@ export class BotControlHandler {
                 return;
             }
 
-            if (Math.random() > 0.15){
+            if (Math.random() > 0.20){
                 return;
+            }
+
+            if (Math.random() < 0.02){
+                BotControl.target = null;
             }
 
             let CharacterController2D = game.ComponentStore.getComponentByEntityId("CharacterController2D", BotID);
@@ -521,7 +516,7 @@ export class BotControlHandler {
                 CharacterController2D.keys["KeyA"] = TargetBody.x < Body.x;
                 CharacterController2D.keys["KeyD"] = TargetBody.x > Body.x;
 
-                if (Math.random() < 0.20){
+                if (Math.random() < 0.15){
                     MarkerSummoner.keys["Space"] = true;
                 }
 
@@ -581,13 +576,12 @@ export class BotControlHandler {
     }
 
     // noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
-    calculateAngleBetweenPoints(px, py, ax, ay)
-    {
+    calculateAngleBetweenPoints(px, py, ax, ay) {
         return Math.atan((ax-px)/(ay-py));
     }
 
     // noinspection JSMethodCanBeStatic
-    distanceBetweenPoints(x1,y1,x2,y2){
+    distanceBetweenPoints(x1,y1,x2,y2) {
         if(!x2) x2=0;
         if(!y2) y2=0;
         return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));

@@ -31,7 +31,7 @@ export class ComponentStore {
 
     addEntity(entity){
         for (let component of entity.components){
-            //
+
             if (!this.components.has(component.name)){
                 this.components.set(component.name, new Map());
             }

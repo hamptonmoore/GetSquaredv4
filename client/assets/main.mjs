@@ -1,5 +1,4 @@
-import {Entity} from './classes/Entity.js'
-import * as Components from './classes/Components.js'
+import * as Assemblages from './classes/Assemblages.js'
 import * as Systems from './classes/Systems.js'
 import {ComponentStore} from "./classes/ComponentStore.js";
 import * as randomGenerators from './classes/randomGenerators.js'
@@ -51,16 +50,7 @@ document.getElementById("color").setAttribute("value", localStorage.getItem('col
 // Bot
 
 for (let i = 0; i < 30; i++) {
-    game.ComponentStore.addEntity(new Entity([
-        new Components.Body(0, 0, 20, 20),
-        new Components.AppearanceShape("roundedFilledRect", randomGenerators.generateColor(), "black", 2),
-        new Components.Velocity(0, 0, 3, 3, 0.8),
-        new Components.CharacterController2D(1),
-        new Components.MarkerSummoner(),
-        new Components.Player(randomGenerators.generateName()),
-        new Components.PlayerRespawn(),
-        new Components.BotControl()
-    ]));
+    game.ComponentStore.addEntity(new Assemblages.Bot(randomGenerators.generateName(), randomGenerators.generateColor()));
 }
 
 setInterval(function() {
@@ -80,16 +70,7 @@ document.addEventListener("keyup", function(event){
 document.getElementById("startGame").addEventListener("click", function(){
     let username = document.getElementById("username").value || document.getElementById("username").getAttribute("placeholder");
     let color = document.getElementById("color").value;
-    game.ComponentStore.addEntity(new Entity([
-        new Components.Body(50, 50, 20, 20),
-        new Components.AppearanceShape("roundedFilledRect", color, "black", 2),
-        new Components.CharacterController2D(1),
-        new Components.Velocity(0, 0, 3, 3, 0.8),
-        new Components.MarkerSummoner(),
-        new Components.Player(username),
-        new Components.LocalPlayer(),
-        new Components.PlayerRespawn()
-    ]));
+    game.ComponentStore.addEntity(new Assemblages.Player(username, color));
     localStorage.setItem('username', username);
     localStorage.setItem('color', color);
     document.getElementById("main-menu").style.visibility = 'hidden';
