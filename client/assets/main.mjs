@@ -20,24 +20,24 @@ let game = {
         height: 2048
     },
     scale: Math.min(document.body.clientWidth, document.body.clientHeight)/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
-    systems: new Map(),
+    systems: [],
     ComponentStore: new ComponentStore(),
     keys: [] // Keypresses since the last time system HandleInputs was run
 };
 /*
 Register the Systems
  */
-game.systems.set("PlayerRespawnHandler", new Systems.PlayerRespawnHandler());
-game.systems.set("ClientHandleInputs", new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
-game.systems.set("BotControlHandler", new Systems.BotControlHandler());
-game.systems.set("CharacterController2D", new Systems.CharacterController2D());
-game.systems.set("Velocity", new Systems.Velocity());
-game.systems.set("BorderControl", new Systems.BorderControl());
-game.systems.set("MarkerHandler", new Systems.MarkerHandler());
-game.systems.set("MarkerSummoner", new Systems.MarkerSummoner());
-game.systems.set("RectangleOfDeathHandler", new Systems.RectangleOfDeathHandler());
-game.systems.set("Render", new Systems.Render(canvas));
-game.systems.set("RenderScoreboard", new Systems.RenderScoreboard(canvas));
+game.systems.push(new Systems.PlayerRespawnHandler());
+game.systems.push(new Systems.ClientHandleInputs(["CharacterController2D", "MarkerSummoner"]));
+game.systems.push(new Systems.BotControlHandler());
+game.systems.push(new Systems.CharacterController2D());
+game.systems.push(new Systems.Velocity());
+game.systems.push(new Systems.BorderControl());
+game.systems.push(new Systems.MarkerHandler());
+game.systems.push(new Systems.MarkerSummoner());
+game.systems.push(new Systems.RectangleOfDeathHandler());
+game.systems.push(new Systems.Render(canvas));
+game.systems.push(new Systems.RenderScoreboard(canvas));
 /*
     Lets create an Entity
 */
@@ -54,7 +54,7 @@ for (let i = 0; i < 30; i++) {
 }
 
 setInterval(function() {
-    for (let system of game.systems.values()){
+    for (let system of game.systems){
         system.run(game);
     }
 }, 1000/60);
