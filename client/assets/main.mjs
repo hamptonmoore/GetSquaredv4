@@ -1,5 +1,5 @@
 import {Entity} from './classes/Entity.js'
-import * as Component from './classes/Component.js'
+import * as Components from './classes/Components.js'
 import * as Systems from './classes/Systems.js'
 import {ComponentStore} from "./classes/ComponentStore.js";
 import * as randomGenerators from './classes/randomGenerators.js'
@@ -52,14 +52,14 @@ document.getElementById("color").setAttribute("value", localStorage.getItem('col
 
 for (let i = 0; i < 30; i++) {
     game.ComponentStore.addEntity(new Entity([
-        new Component.Body(0, 0, 20, 20),
-        new Component.AppearanceShape("roundedFilledRect", randomGenerators.generateColor(), "black", 2),
-        new Component.Velocity(0, 0, 3, 3, 0.8),
-        new Component.CharacterController2D(1),
-        new Component.MarkerSummoner(),
-        new Component.Player(randomGenerators.generateName()),
-        new Component.PlayerRespawn(),
-        new Component.BotControl()
+        new Components.Body(0, 0, 20, 20),
+        new Components.AppearanceShape("roundedFilledRect", randomGenerators.generateColor(), "black", 2),
+        new Components.Velocity(0, 0, 3, 3, 0.8),
+        new Components.CharacterController2D(1),
+        new Components.MarkerSummoner(),
+        new Components.Player(randomGenerators.generateName()),
+        new Components.PlayerRespawn(),
+        new Components.BotControl()
     ]));
 }
 
@@ -81,14 +81,14 @@ document.getElementById("startGame").addEventListener("click", function(){
     let username = document.getElementById("username").value || document.getElementById("username").getAttribute("placeholder");
     let color = document.getElementById("color").value;
     game.ComponentStore.addEntity(new Entity([
-        new Component.Body(50, 50, 20, 20),
-        new Component.AppearanceShape("roundedFilledRect", color, "black", 2),
-        new Component.CharacterController2D(1),
-        new Component.Velocity(0, 0, 3, 3, 0.8),
-        new Component.MarkerSummoner(),
-        new Component.Player(username),
-        new Component.LocalPlayer(),
-        new Component.PlayerRespawn()
+        new Components.Body(50, 50, 20, 20),
+        new Components.AppearanceShape("roundedFilledRect", color, "black", 2),
+        new Components.CharacterController2D(1),
+        new Components.Velocity(0, 0, 3, 3, 0.8),
+        new Components.MarkerSummoner(),
+        new Components.Player(username),
+        new Components.LocalPlayer(),
+        new Components.PlayerRespawn()
     ]));
     localStorage.setItem('username', username);
     localStorage.setItem('color', color);

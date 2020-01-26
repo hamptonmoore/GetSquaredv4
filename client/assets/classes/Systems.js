@@ -1,5 +1,5 @@
 import {Entity} from "./Entity.js";
-import * as Component from "./Component.js";
+import * as Component from "./Components.js";
 
 export class Render {
     constructor(canvas) {
@@ -468,8 +468,7 @@ export class BotControlHandler {
                 return;
             }
 
-            // Lets only update every 10ish frames
-            if (Math.random() > 0.10){
+            if (Math.random() > 0.15){
                 return;
             }
 
@@ -507,6 +506,8 @@ export class BotControlHandler {
                 BotControl.target = closest.id;
 
             } else {
+
+                // Lets move to track our target
                 if (!game.ComponentStore.checkComponentByEntityId("Body", BotControl.target)){
                     BotControl.target = null;
                     return;
@@ -524,8 +525,59 @@ export class BotControlHandler {
                     MarkerSummoner.keys["Space"] = true;
                 }
 
+                // Our last priority is to watch out for ROD
+
+                let closest = {
+                    id: "",
+                    distance: null,
+                };
+
+                game.ComponentStore.getComponentsByComponentType("RectangleOfDeath").forEach((RectangleOfDeath, RectangleOfDeathID) => {
+                    if (!game.ComponentStore.checkComponentByEntityId("Body", RectangleOfDeathID)){
+                        return;
+                    }
+
+                    let RODBody = game.ComponentStore.getComponentByEntityId("Body", RectangleOfDeathID);
+
+                    let distanceToROD = this.findClosest(Body, RODBody);
+
+                    if ((distanceToROD < closest.distance || closest.distance === null) && (RectangleOfDeath.owner !== BotID)){
+                        closest.distance = distanceToROD;
+                        closest.id = RectangleOfDeathID;
+                    }
+                });
+
+                if (closest.distance < 80 && closest.id !== ""){
+                    let RODBody = game.ComponentStore.getComponentByEntityId("Body", closest.id);
+
+                    CharacterController2D.keys["KeyW"] = RODBody.y > Body.y;
+                    CharacterController2D.keys["KeyS"] = RODBody.y < Body.y;
+
+                    CharacterController2D.keys["KeyA"] = RODBody.x > Body.x;
+                    CharacterController2D.keys["KeyD"] = RODBody.x < Body.x;
+                }
+
             }
         })
+    }
+
+    // noinspection JSMethodCanBeStatic
+    findClosest(BotBody, RectangleOfDeathBody) {
+        let x1, x2, y1, y2;
+        let w, h;
+        if (BotBody.x > RectangleOfDeathBody.x) {
+            x1 = RectangleOfDeathBody.x; w = RectangleOfDeathBody.width; x2 = BotBody.x;
+        } else {
+            x1 = BotBody.x; w = BotBody.width; x2 = RectangleOfDeathBody.x;
+        }
+        if (BotBody.y > RectangleOfDeathBody.y) {
+            y1 = RectangleOfDeathBody.y; h = RectangleOfDeathBody.height; y2 = BotBody.y;
+        } else {
+            y1 = BotBody.y; h = BotBody.height; y2 = RectangleOfDeathBody.y;
+        }
+        let a = Math.max(0, x2 - x1 - w);
+        let b = Math.max(0, y2 - y1 - h);
+        return Math.sqrt(a*a+b*b);
     }
 
     // noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
