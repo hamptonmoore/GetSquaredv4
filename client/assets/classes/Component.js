@@ -79,17 +79,6 @@ export class AppearanceShape {
         this.strokeWidth = strokeWidth;
         this.name        = "AppearanceShape";
     }
-
-    randomColor(){
-        let h = this.randomInteger(0, 360);
-        let s = this.randomInteger(42, 98);
-        let l = this.randomInteger(40, 90);
-        return `hsl(${h},${s}%,${l}%)`;
-    }
-
-    randomInteger = function(min, max){
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
 }
 
 export class Player {
@@ -99,8 +88,6 @@ export class Player {
         this.playerName = playerName;
         this.name   = "Player";
     }
-
-
 }
 
 export class RectangleOfDeath {
