@@ -412,6 +412,13 @@ export class RectangleOfDeathHandler {
     }
 }
 
+export class ComponentStoreChangeTrackerManager {
+    // noinspection JSMethodCanBeStatic
+    run(game){
+        game.ComponentStoreChangeTracker.emptyState();
+    }
+}
+
 export class BorderControl {
     run(game){
         this.constrainBorder(game);
@@ -589,3 +596,4 @@ export class BotControlHandler {
         return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
     }
 }
+

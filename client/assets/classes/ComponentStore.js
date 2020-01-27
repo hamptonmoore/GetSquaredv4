@@ -1,13 +1,18 @@
 export class ComponentStore {
-    constructor(){
+    constructor(ComponentStoreChangeTracker){
         this.components = new Map();
 
-        this.logger = {
-            set(obj, key, val){
-                // console.log(obj, key, val);
-                obj[key] = val;
+        this.ComponentStoreChangeTracker = ComponentStoreChangeTracker;
 
-                return true;
+        this.logger = function(entityID, componentName, ComponentStoreChangeTracker) {
+            return {
+                set(obj, key, val) {
+
+                    ComponentStoreChangeTracker.addChangeToComponent(componentName, entityID, key, val);
+                    obj[key] = val;
+
+                    return true;
+                }
             }
         }
     }
@@ -17,6 +22,7 @@ export class ComponentStore {
     }
 
     deleteComponentByEntityId(component, entityID){
+        this.ComponentStoreChangeTracker.deleteComponent(component.name, entityID);
         return this.components.get(component).delete(entityID);
     }
 
@@ -26,7 +32,7 @@ export class ComponentStore {
 
     getComponentByEntityId(component, entityID){
         if (this.checkComponentByEntityId(component, entityID)){
-            return new Proxy(this.components.get(component).get(entityID), this.logger);
+            return this.components.get(component).get(entityID);
         } else {
             return false;
         }
@@ -39,6 +45,7 @@ export class ComponentStore {
     deleteEntity(entityID){
         for (let componentName of this.components.keys()){
             this.deleteComponentByEntityId(componentName, entityID);
+            this.ComponentStoreChangeTracker.deleteComponent(componentName, entityID);
         }
     }
 
@@ -49,7 +56,8 @@ export class ComponentStore {
                 this.components.set(component.name, new Map());
             }
 
-            this.setComponentByEntityId(component.name, entity.id, component);
+            this.setComponentByEntityId(component.name, entity.id, new Proxy(component, new this.logger(entity.id, component.name, this.ComponentStoreChangeTracker)));
+            this.ComponentStoreChangeTracker.addComponentCreation(component, entity.id);
         }
     }
 }

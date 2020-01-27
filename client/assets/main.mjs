@@ -2,6 +2,7 @@ import * as Assemblages from './classes/Assemblages.js'
 import * as Systems from './classes/Systems.js'
 import {ComponentStore} from "./classes/ComponentStore.js";
 import * as randomGenerators from './classes/randomGenerators.js'
+import {ComponentStoreChangeTracker} from "./classes/ComponentStoreChangeTracker.js";
 
 let canvas = document.getElementById("game");
 canvas.width = document.body.clientWidth;
@@ -10,6 +11,8 @@ canvas.height = document.body.clientHeight;
 /*
     Lets create the base game state
 */
+let changeTracker = new ComponentStoreChangeTracker();
+
 let game = {
     screen: {
         width: canvas.width,
@@ -21,7 +24,8 @@ let game = {
     },
     scale: Math.min(document.body.clientWidth, document.body.clientHeight)/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
     systems: [],
-    ComponentStore: new ComponentStore(),
+    ComponentStoreChangeTracker: changeTracker,
+    ComponentStore: new ComponentStore(changeTracker),
     keys: [] // Keypresses since the last time system HandleInputs was run
 };
 /*
@@ -38,6 +42,7 @@ game.systems.push(new Systems.MarkerSummoner());
 game.systems.push(new Systems.RectangleOfDeathHandler());
 game.systems.push(new Systems.Render(canvas));
 game.systems.push(new Systems.RenderScoreboard(canvas));
+game.systems.push(new Systems.ComponentStoreChangeTrackerManager());
 /*
     Lets create an Entity
 */
