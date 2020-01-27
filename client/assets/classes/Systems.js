@@ -30,19 +30,19 @@ export class Render {
 
             this.canvas2DContext.moveTo(i  - ((clientBody.x % 60) * game.scale),0);
 
-            this.canvas2DContext.lineTo(i  - ((clientBody.x % 60) * game.scale),game.screen.height * game.scale);
+            this.canvas2DContext.lineTo(i  - ((clientBody.x % 60) * game.scale),game.screen.height + extraSpace);
 
             this.canvas2DContext.stroke();
 
             this.canvas2DContext.closePath();
         }
 
-        for (let i = 0; i < game.screen.height + (60 * game.scale); i += gridSpace){
+        for (let i = 0; i < game.screen.height + extraSpace; i += gridSpace){
             this.canvas2DContext.beginPath();
 
             this.canvas2DContext.moveTo(0,i  - ((clientBody.y % 60) * game.scale));
 
-            this.canvas2DContext.lineTo(game.screen.height * game.scale + extraSpace,i  - ((clientBody.y % 60) * game.scale));
+            this.canvas2DContext.lineTo(game.screen.width + extraSpace,i  - ((clientBody.y % 60) * game.scale));
 
             this.canvas2DContext.stroke();
 
