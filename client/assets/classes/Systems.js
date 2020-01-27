@@ -459,11 +459,11 @@ export class BotControlHandler {
                 return;
             }
 
-            if (Math.random() > 0.20){
+            if (Math.random() > 0.10){
                 return;
             }
 
-            if (Math.random() < 0.02){
+            if (Math.random() < 0.05){
                 BotControl.target = null;
             }
 
@@ -542,7 +542,7 @@ export class BotControlHandler {
                     }
                 });
 
-                if (closest.distance < 80 && closest.id !== ""){
+                if (closest.distance < 40 && closest.id !== ""){
                     let RODBody = game.ComponentStore.getComponentByEntityId("Body", closest.id);
 
                     CharacterController2D.keys["KeyW"] = RODBody.y > Body.y;
@@ -550,6 +550,8 @@ export class BotControlHandler {
 
                     CharacterController2D.keys["KeyA"] = RODBody.x > Body.x;
                     CharacterController2D.keys["KeyD"] = RODBody.x < Body.x;
+
+                    BotControl.target = null;
                 }
 
             }
