@@ -24,12 +24,10 @@ export class Velocity {
 export class CharacterController2D {
     constructor(acceleration){
         this.acceleration = acceleration;
-        this.keys = {
-            "KeyW": false,
-            "KeyA": false,
-            "KeyS": false,
-            "KeyD": false
-        };
+        this.KeyW = false;
+        this.KeyA = false;
+        this.KeyS = false;
+        this.KeyD = false;
 
         this.name = "CharacterController2D";
     }
@@ -52,9 +50,7 @@ export class LocalPlayer {
 
 export class MarkerSummoner {
     constructor(){
-        this.keys = {
-            "Space": false
-        };
+        this.Space = false;
 
         // noinspection JSUnusedGlobalSymbols
         this.firstMarkerID  = null;

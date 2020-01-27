@@ -155,7 +155,7 @@ export class MarkerSummoner {
     run(game) {
         game.ComponentStore.getComponentsByComponentType("MarkerSummoner").forEach((MarkerSummoner, entityID) => {
             // If it doesnt have a body or space is not being held then return
-            if (!game.ComponentStore.checkComponentByEntityId("Body", entityID) || !game.ComponentStore.checkComponentByEntityId("AppearanceShape", entityID) || !MarkerSummoner.keys["Space"]) {
+            if (!game.ComponentStore.checkComponentByEntityId("Body", entityID) || !game.ComponentStore.checkComponentByEntityId("AppearanceShape", entityID) || !MarkerSummoner["Space"]) {
                 return;
             }
 
@@ -191,7 +191,7 @@ export class MarkerSummoner {
 
                 game.ComponentStore.addEntity(rectangleOfDeath);
             }
-            MarkerSummoner.keys["Space"] = false;
+            MarkerSummoner["Space"] = false;
         })
     }
 
@@ -220,14 +220,14 @@ export class CharacterController2D {
             if (game.ComponentStore.checkComponentByEntityId("Velocity", entityID)) {
                 let Velocity = game.ComponentStore.getComponentByEntityId("Velocity", entityID);
 
-                if (CharacterController2D.keys["KeyW"]) {
+                if (CharacterController2D["KeyW"]) {
                     if (Velocity.yMomentum > 0) {
                         Velocity.yMomentum = -CharacterController2D.acceleration;
                     } else {
                         Velocity.yMomentum -= CharacterController2D.acceleration;
                     }
                 }
-                if (CharacterController2D.keys["KeyS"]) {
+                if (CharacterController2D["KeyS"]) {
                     if (Velocity.yMomentum < 0) {
                         Velocity.yMomentum = CharacterController2D.acceleration;
                     } else {
@@ -235,14 +235,14 @@ export class CharacterController2D {
                     }
 
                 }
-                if (CharacterController2D.keys["KeyA"]) {
+                if (CharacterController2D["KeyA"]) {
                     if (Velocity.xMomentum > 0) {
                         Velocity.xMomentum = -CharacterController2D.acceleration;
                     } else {
                         Velocity.xMomentum -= CharacterController2D.acceleration;
                     }
                 }
-                if (CharacterController2D.keys["KeyD"]) {
+                if (CharacterController2D["KeyD"]) {
                     if (Velocity.xMomentum < 0) {
                         Velocity.xMomentum = CharacterController2D.acceleration;
                     } else {
@@ -253,16 +253,16 @@ export class CharacterController2D {
             } else if (game.ComponentStore.checkComponentByEntityId("Body", entityID)) {
                 let Body = game.ComponentStore.getComponentByEntityId("Body", entityID);
 
-                if (CharacterController2D.keys["KeyW"]) {
+                if (CharacterController2D["KeyW"]) {
                     Body.y -= CharacterController2D.acceleration;
                 }
-                if (CharacterController2D.keys["KeyS"]) {
+                if (CharacterController2D["KeyS"]) {
                     Body.y += CharacterController2D.acceleration;
                 }
-                if (CharacterController2D.keys["KeyA"]) {
+                if (CharacterController2D["KeyA"]) {
                     Body.x -= CharacterController2D.acceleration;
                 }
-                if (CharacterController2D.keys["KeyD"]) {
+                if (CharacterController2D["KeyD"]) {
                     Body.x += CharacterController2D.acceleration;
                 }
             }
@@ -307,8 +307,8 @@ export class ClientHandleInputs {
             for (let key of game.keys) {
                 for (let componentToSearchFor of this.componentsThatAcceptInputs) {
                     game.ComponentStore.getComponentsByComponentType(componentToSearchFor).forEach((component, componentID) => {
-                        if (component.keys.hasOwnProperty(key.code) && componentID === localPlayerID) {
-                            component.keys[key.code] = key.state;
+                        if (component.hasOwnProperty(key.code) && componentID === localPlayerID) {
+                            component[key.code] = key.state;
                         }
                     })
                 }
@@ -510,14 +510,14 @@ export class BotControlHandler {
 
                 let TargetBody = game.ComponentStore.getComponentByEntityId("Body", BotControl.target);
 
-                CharacterController2D.keys["KeyW"] = TargetBody.y < Body.y;
-                CharacterController2D.keys["KeyS"] = TargetBody.y > Body.y;
+                CharacterController2D["KeyW"] = TargetBody.y < Body.y;
+                CharacterController2D["KeyS"] = TargetBody.y > Body.y;
 
-                CharacterController2D.keys["KeyA"] = TargetBody.x < Body.x;
-                CharacterController2D.keys["KeyD"] = TargetBody.x > Body.x;
+                CharacterController2D["KeyA"] = TargetBody.x < Body.x;
+                CharacterController2D["KeyD"] = TargetBody.x > Body.x;
 
                 if (Math.random() < 0.15){
-                    MarkerSummoner.keys["Space"] = true;
+                    MarkerSummoner["Space"] = true;
                 }
 
                 // Our last priority is to watch out for ROD
@@ -545,11 +545,11 @@ export class BotControlHandler {
                 if (closest.distance < 40 && closest.id !== ""){
                     let RODBody = game.ComponentStore.getComponentByEntityId("Body", closest.id);
 
-                    CharacterController2D.keys["KeyW"] = RODBody.y > Body.y;
-                    CharacterController2D.keys["KeyS"] = RODBody.y < Body.y;
+                    CharacterController2D["KeyW"] = RODBody.y > Body.y;
+                    CharacterController2D["KeyS"] = RODBody.y < Body.y;
 
-                    CharacterController2D.keys["KeyA"] = RODBody.x > Body.x;
-                    CharacterController2D.keys["KeyD"] = RODBody.x < Body.x;
+                    CharacterController2D["KeyA"] = RODBody.x > Body.x;
+                    CharacterController2D["KeyD"] = RODBody.x < Body.x;
 
                     BotControl.target = null;
                 }
