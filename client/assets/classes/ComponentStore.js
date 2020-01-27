@@ -1,6 +1,15 @@
 export class ComponentStore {
     constructor(){
         this.components = new Map();
+
+        this.logger = {
+            set(obj, key, val){
+                // console.log(obj, key, val);
+                obj[key] = val;
+
+                return true;
+            }
+        }
     }
 
     checkComponentByEntityId(component, entityID){
@@ -16,7 +25,11 @@ export class ComponentStore {
     }
 
     getComponentByEntityId(component, entityID){
-        return this.components.get(component).get(entityID);
+        if (this.checkComponentByEntityId(component, entityID)){
+            return new Proxy(this.components.get(component).get(entityID), this.logger);
+        } else {
+            return false;
+        }
     }
 
     setComponentByEntityId(component, entityID, entityComponent){
