@@ -278,17 +278,18 @@ export class Velocity {
                 let Body = game.ComponentStore.getComponentByEntityId("Body", entityID);
 
                 // If xMomentum is great than it limit set it to the limit
-                Velocity.xMomentum = Velocity.xMomentum > Velocity.maxXMomentum ? Velocity.maxXMomentum : Velocity.xMomentum;
-                Velocity.xMomentum = Velocity.xMomentum < -Velocity.maxXMomentum ? -Velocity.maxXMomentum : Velocity.xMomentum;
+                let xMomentum = Velocity.xMomentum > Velocity.maxXMomentum ? Velocity.maxXMomentum : Velocity.xMomentum;
+                xMomentum = xMomentum < -Velocity.maxXMomentum ? -Velocity.maxXMomentum : xMomentum;
+
                 // Equally with the yMomentum
-                Velocity.yMomentum = Velocity.yMomentum > Velocity.maxYMomentum ? Velocity.maxYMomentum : Velocity.yMomentum;
-                Velocity.yMomentum = Velocity.yMomentum < -Velocity.maxYMomentum ? -Velocity.maxYMomentum : Velocity.yMomentum;
+                let yMomentum = Velocity.yMomentum > Velocity.maxYMomentum ? Velocity.maxYMomentum : Velocity.yMomentum;
+                yMomentum = yMomentum < -Velocity.maxYMomentum ? -Velocity.maxYMomentum : yMomentum;
 
-                Body.x += Velocity.xMomentum;
-                Body.y += Velocity.yMomentum;
+                Body.x = Math.round(Body.x + xMomentum);
+                Body.y = Math.round(Body.y + yMomentum);
 
-                Velocity.xMomentum *= Velocity.baseFriction;
-                Velocity.yMomentum *= Velocity.baseFriction;
+                Velocity.xMomentum = xMomentum * Velocity.baseFriction;
+                Velocity.yMomentum = yMomentum * Velocity.baseFriction;
             }
         })
     }
@@ -515,24 +516,16 @@ export class BotControlHandler {
                     return;
                 }
 
-                let TargetBody = game.ComponentStore.getComponentByEntityId("Body", BotControl.target);
-
-                CharacterController2D["KeyW"] = TargetBody.y < Body.y;
-                CharacterController2D["KeyS"] = TargetBody.y > Body.y;
-
-                CharacterController2D["KeyA"] = TargetBody.x < Body.x;
-                CharacterController2D["KeyD"] = TargetBody.x > Body.x;
-
-                if (Math.random() < 0.15){
-                    MarkerSummoner["Space"] = true;
-                }
-
                 // Our last priority is to watch out for ROD
 
                 let closest = {
                     id: "",
                     distance: null,
                 };
+
+                if (Math.random() < 0.15){
+                    MarkerSummoner["Space"] = true;
+                }
 
                 game.ComponentStore.getComponentsByComponentType("RectangleOfDeath").forEach((RectangleOfDeath, RectangleOfDeathID) => {
                     if (!game.ComponentStore.checkComponentByEntityId("Body", RectangleOfDeathID)){
@@ -559,6 +552,14 @@ export class BotControlHandler {
                     CharacterController2D["KeyD"] = RODBody.x < Body.x;
 
                     BotControl.target = null;
+                } else {
+                    let TargetBody = game.ComponentStore.getComponentByEntityId("Body", BotControl.target);
+
+                    CharacterController2D["KeyW"] = TargetBody.y < Body.y;
+                    CharacterController2D["KeyS"] = TargetBody.y > Body.y;
+
+                    CharacterController2D["KeyA"] = TargetBody.x < Body.x;
+                    CharacterController2D["KeyD"] = TargetBody.x > Body.x;
                 }
 
             }

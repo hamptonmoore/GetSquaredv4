@@ -8,8 +8,10 @@ export class ComponentStore {
             return {
                 set(obj, key, val) {
 
-                    ComponentStoreChangeTracker.addChangeToComponent(componentName, entityID, key, val);
-                    obj[key] = val;
+                    if (obj[key] !== val){
+                        ComponentStoreChangeTracker.addChangeToComponent(componentName, entityID, key, val);
+                        obj[key] = val;
+                    }
 
                     return true;
                 }
@@ -22,7 +24,7 @@ export class ComponentStore {
     }
 
     deleteComponentByEntityId(component, entityID){
-        this.ComponentStoreChangeTracker.deleteComponent(component.name, entityID);
+        this.ComponentStoreChangeTracker.deleteComponent(component, entityID);
         return this.components.get(component).delete(entityID);
     }
 
@@ -45,7 +47,6 @@ export class ComponentStore {
     deleteEntity(entityID){
         for (let componentName of this.components.keys()){
             this.deleteComponentByEntityId(componentName, entityID);
-            this.ComponentStoreChangeTracker.deleteComponent(componentName, entityID);
         }
     }
 
