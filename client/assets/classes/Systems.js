@@ -153,6 +153,7 @@ export class RenderScoreboard {
 
 export class MarkerSummoner {
     run(game) {
+
         game.ComponentStore.getComponentsByComponentType("MarkerSummoner").forEach((MarkerSummoner, entityID) => {
             // If it doesnt have a body or space is not being held then return
             if (!game.ComponentStore.checkComponentByEntityId("Body", entityID) || !game.ComponentStore.checkComponentByEntityId("AppearanceShape", entityID) || !MarkerSummoner["Space"]) {
@@ -273,6 +274,7 @@ export class CharacterController2D {
 export class Velocity {
     // noinspection JSMethodCanBeStatic
     run(game) {
+
         game.ComponentStore.getComponentsByComponentType("Velocity").forEach((Velocity, entityID) => {
             if (game.ComponentStore.checkComponentByEntityId("Body", entityID)) {
                 let Body = game.ComponentStore.getComponentByEntityId("Body", entityID);
@@ -416,6 +418,7 @@ export class RectangleOfDeathHandler {
 export class ComponentStoreChangeTrackerManager {
     // noinspection JSMethodCanBeStatic
     run(game){
+        // game.ComponentStoreChangeTracker.optimize();
         game.ComponentStoreChangeTracker.emptyState();
     }
 }
@@ -523,7 +526,7 @@ export class BotControlHandler {
                     distance: null,
                 };
 
-                if (Math.random() < 0.15){
+                if (Math.random() < 0.10){
                     MarkerSummoner["Space"] = true;
                 }
 

@@ -51,6 +51,7 @@ export class ComponentStore {
     }
 
     addEntity(entity){
+
         for (let component of entity.components){
 
             if (!this.components.has(component.name)){
@@ -58,7 +59,7 @@ export class ComponentStore {
             }
 
             this.setComponentByEntityId(component.name, entity.id, new Proxy(component, new this.logger(entity.id, component.name, this.ComponentStoreChangeTracker)));
-            this.ComponentStoreChangeTracker.addComponentCreation(component, entity.id);
+            this.ComponentStoreChangeTracker.addComponentCreation(entity);
         }
     }
 }

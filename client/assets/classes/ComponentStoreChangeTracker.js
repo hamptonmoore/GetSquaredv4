@@ -30,19 +30,34 @@ export class ComponentStoreChangeTracker {
         return arrayToChange;
     }
 
+    removeDeleted(arrayToDeleteFrom, arrayOfDeletions){
+
+        arrayToDeleteFrom = arrayToDeleteFrom.filter((item)=>{
+
+            for (let checkIndex = 0; checkIndex < arrayOfDeletions.length; checkIndex++){
+                if (item[1] === arrayOfDeletions[checkIndex][1]){
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        return arrayToDeleteFrom;
+    }
+
     // noinspection JSUnusedGlobalSymbols
     optimize(){
         this.state.changes = this.removeDuplicates(this.state.changes);
-        this.state.creations = this.removeDuplicates(this.state.creations);
-        this.state.deletions = this.removeDuplicates(this.state.deletions);
+        this.state.changes = this.removeDeleted(this.state.changes, this.state.deletions);
     }
 
     addChangeToComponent(componentName, entityID, key, value){
         this.state.changes.push([componentName, entityID, key, value]);
     }
 
-    addComponentCreation(component, entityID){
-        this.state.creations.push([entityID, ...Object.keys(component), ...Object.values(component)]);
+    addComponentCreation(entity){
+        this.state.creations.push([entity.type, entity.id, ...entity.arguments]);
     }
 
     deleteComponent(componentName, entityID){

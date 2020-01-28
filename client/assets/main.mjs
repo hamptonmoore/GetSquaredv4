@@ -22,6 +22,11 @@ let game = {
         width: 2048,
         height: 2048
     },
+    debug: {
+        changeCount: 1,
+        roundsOfChange: 1,
+    },
+    tick: 0,
     scale: Math.min(document.body.clientWidth, document.body.clientHeight)/512, // Everything is scaled based on the game normally being 512px by 512px. Why those dimensions? Because I said so
     systems: [],
     ComponentStoreChangeTracker: changeTracker,
@@ -59,6 +64,7 @@ for (let i = 0; i < 30; i++) {
 }
 
 setInterval(function() {
+    game.tick++;
     for (let system of game.systems){
         system.run(game);
     }
