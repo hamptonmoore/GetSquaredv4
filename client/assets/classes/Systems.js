@@ -140,11 +140,6 @@ export class RenderScoreboard {
         this.canvas2DContext.fillText(`-- Scoreboard --`, 25 * game.scale, 20* game.scale);
 
         for (let i = 0; i < players.length; i++){
-            if (localPlayers.includes(players[i].id)){
-                this.canvas2DContext.fillStyle = "red";
-            } else {
-                this.canvas2DContext.fillStyle = "black";
-            }
             this.canvas2DContext.fillText(`${players[i].name}: ${players[i].points}`, 25 * game.scale, (40 + (i * 15))* game.scale);
         }
 
