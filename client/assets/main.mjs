@@ -86,3 +86,5 @@ document.getElementById("startGame").addEventListener("click", function(){
     localStorage.setItem('color', color);
     document.getElementById("main-menu").style.visibility = 'hidden';
 });
+
+document.getElementById("startGame").focus();
