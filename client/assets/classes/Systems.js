@@ -465,7 +465,7 @@ export class BotControlHandler {
                 return;
             }
 
-            if (Math.random() > 0.10){
+            if (Math.random() > 0.20){
                 return;
             }
 

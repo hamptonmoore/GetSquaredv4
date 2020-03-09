@@ -46,7 +46,6 @@ game.systems.push(new Systems.MarkerHandler());
 game.systems.push(new Systems.MarkerSummoner());
 game.systems.push(new Systems.RectangleOfDeathHandler());
 game.systems.push(new Systems.Render(canvas));
-game.systems.push(new Systems.RenderScoreboard(canvas));
 game.systems.push(new Systems.ComponentStoreChangeTrackerManager());
 /*
     Lets create an Entity
@@ -85,6 +84,7 @@ document.getElementById("startGame").addEventListener("click", function(){
     localStorage.setItem('username', username);
     localStorage.setItem('color', color);
     document.getElementById("main-menu").style.visibility = 'hidden';
+    game.systems.push(new Systems.RenderScoreboard(canvas));
 });
 
 document.getElementById("startGame").focus();
