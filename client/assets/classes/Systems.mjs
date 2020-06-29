@@ -1,5 +1,5 @@
-import * as Assemblages from './Assemblages.js'
-import * as Components from "./Components.js";
+import * as Assemblages from './Assemblages.mjs'
+import * as Components from "./Components.mjs";
 
 export class Render {
     constructor(canvas) {

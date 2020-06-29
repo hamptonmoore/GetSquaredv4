@@ -1,8 +1,8 @@
-import * as Assemblages from './classes/Assemblages.js'
-import * as Systems from './classes/Systems.js'
-import {ComponentStore} from "./classes/ComponentStore.js";
-import * as randomGenerators from './classes/randomGenerators.js'
-import {ComponentStoreChangeTracker} from "./classes/ComponentStoreChangeTracker.js";
+import * as Assemblages from './classes/Assemblages.mjs'
+import * as Systems from './classes/Systems.mjs'
+import {ComponentStore} from "./classes/ComponentStore.mjs";
+import * as randomGenerators from './classes/randomGenerators.mjs'
+import {ComponentStoreChangeTracker} from "./classes/ComponentStoreChangeTracker.mjs";
 
 let canvas = document.getElementById("game");
 canvas.width = document.body.clientWidth;

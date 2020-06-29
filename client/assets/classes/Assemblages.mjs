@@ -1,5 +1,5 @@
-import {Entity} from './Entity.js'
-import * as Components from "./Components.js";
+import {Entity} from './Entity.mjs'
+import * as Components from "./Components.mjs";
 
 export class Player extends Entity {
     constructor(username, color){
