@@ -1,5 +1,5 @@
 import * as Assemblages from './classes/Assemblages.mjs'
-import * as Systems from './classes/Systems.mjs'
+import * as Systems from './classes/ClientSystems.mjs'
 import {ComponentStore} from "./classes/ComponentStore.mjs";
 import * as randomGenerators from './classes/randomGenerators.mjs'
 import {ComponentStoreChangeTracker} from "./classes/ComponentStoreChangeTracker.mjs";
